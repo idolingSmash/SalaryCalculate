@@ -29,6 +29,7 @@ public class CalcActivity extends AppCompatActivity implements OnClickListener {
     private TextView money;
     private TextView partTime;
     private TextView overTime;
+    private TextView trafficFee;
 
     private TextView day;
     private TextView week;
@@ -44,7 +45,7 @@ public class CalcActivity extends AppCompatActivity implements OnClickListener {
 
         ActionBar actionBar = getSupportActionBar();
         assert actionBar != null;
-        actionBar.show();
+        actionBar.hide();
         setContentView(R.layout.activity_calc);
         setLayout();
         AdView mAdView = (AdView) findViewById(R.id.adView);
@@ -70,17 +71,16 @@ public class CalcActivity extends AppCompatActivity implements OnClickListener {
     private void setLayout(){
         money = (TextView)findViewById(R.id.money);
         partTime = (TextView)findViewById(R.id.parttime);
-
         overTime = (TextView)findViewById(R.id.overtime);
-        submit = (Button)findViewById(R.id.submitbutton);
+        trafficFee = (TextView)findViewById(R.id.trefficFee);
 
         day = (TextView)findViewById(R.id.daysalary);
         week = (TextView)findViewById(R.id.weeksalary);
         month = (TextView)findViewById(R.id.monthsalary);
 
+        submit = (Button)findViewById(R.id.submitbutton);
         submitLayout = (RelativeLayout)findViewById(R.id.submitLayout);
 
-        money.setOnClickListener(this);
         partTime.setOnClickListener(this);
         overTime.setOnClickListener(this);
         submit.setOnClickListener(this);
@@ -102,7 +102,6 @@ public class CalcActivity extends AppCompatActivity implements OnClickListener {
         Intent intent = new Intent(this, SettingsActivity.class);
         switch (item.getItemId()){
             case 0:
-//                Toast.makeText(this,"click on Option Item", Toast.LENGTH_LONG).show();
                 startActivity(intent);
                 break;
             default:
@@ -120,6 +119,8 @@ public class CalcActivity extends AppCompatActivity implements OnClickListener {
         int timeMoney = 0;
         int dayMoney = 0;
         int overMoney = 0;
+        int costTrafficFee = 0;
+        int sumMoney = 0;
 
         String[] srclist = null;
         boolean flag = true;
@@ -127,7 +128,8 @@ public class CalcActivity extends AppCompatActivity implements OnClickListener {
         Time pTime = null;
         Time oTime = null;
 
-        if(!checkMoneyValue(money.getText().toString())){
+        if(!checkMoneyValue(money.getText().toString()) &&
+                !checkMoneyValue(trafficFee.getText().toString())){
             Toast.makeText(this, "金額の値が不正です。", Toast.LENGTH_LONG).show();
             flag = false;
         }
@@ -165,10 +167,13 @@ public class CalcActivity extends AppCompatActivity implements OnClickListener {
             timeMoney = Integer.parseInt(money.getText().toString());
             dayMoney = timeMoney * (pTime.getHour() + pTime.getMinute() / 60);
             overMoney = (int) (timeMoney * 1.25 * (oTime.getHour() + oTime.getMinute() / 60));
+            costTrafficFee = Integer.parseInt(trafficFee.getText().toString()) * 2;
+            sumMoney = dayMoney + overMoney - costTrafficFee;
 
-            day.setText(String.valueOf(dayMoney + overMoney));
-            week.setText(String.valueOf((dayMoney + overMoney) * 5));
-            month.setText(String.valueOf((dayMoney + overMoney) * 20));
+
+            day.setText(String.valueOf(sumMoney));
+            week.setText(String.valueOf(sumMoney * 5));
+            month.setText(String.valueOf(sumMoney * 20));
         }
     }
 
